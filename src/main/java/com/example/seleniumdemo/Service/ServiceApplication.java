@@ -28,17 +28,18 @@ public class ServiceApplication {
         try {
             // Navigate to Url
             driver.get("https://www.iddaa.com/program/futbol?muk=1_1,2_88,2_100,2_101_2.5,2_89&m=false");
-            for (int i = 4; i < 40; i++) {
+            for (int i = 4; i < 22; i++) {
 
                 String path= String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/*", i);
                 List<WebElement> list = driver.findElements(By.xpath(path));
-
+//todo continue with click
                 repo.addMatchDataToDatabase(saveDataToDatabase(list));
-
+/*
                 for (int j = 0; j < list.size(); j++) {
                     System.out.println("*");
                     System.out.print(list.get(j).getText());
                 }
+  */
             }
 
         } finally {
@@ -61,19 +62,18 @@ public class ServiceApplication {
         matchData.setMatchScore1(Double.parseDouble(list.get(5).getText()));
         matchData.setMatchScore0(Double.parseDouble(list.get(6).getText()));
         matchData.setMatchScore2(Double.parseDouble(list.get(7).getText()));
-        //todo "-" throws exception about convert to double
-        String firstHalf1 = list.get(8).getText();
-        matchData.setFirstHalfScore1(Double.parseDouble(firstHalf1 != "-" ? firstHalf1 : "0"));
-        matchData.setFirstHalfScore0(Double.parseDouble(list.get(9).getText()));
-        matchData.setFirstHalfScore2(Double.parseDouble(list.get(10).getText()));
+
+        matchData.setFirstHalfScore1(list.get(8).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(8).getText()));
+        matchData.setFirstHalfScore0(list.get(9).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(9).getText()));
+        matchData.setFirstHalfScore2(list.get(10).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(10).getText()));
         matchData.setHandicapedMatchScoreH(list.get(11).getText());
-        matchData.setHandicapedMatchScore1(Double.parseDouble(list.get(12).getText()));
-        matchData.setHandicapedMatchScore0(Double.parseDouble(list.get(13).getText()));
-        matchData.setHandicapedMatchScore2(Double.parseDouble(list.get(14).getText()));
-        matchData.setTwoAndHalfGoalLower(Double.parseDouble(list.get(15).getText()));
-        matchData.setTwoAndHalfGoalUpper(Double.parseDouble(list.get(16).getText()));
-        matchData.setOppositeGoalsYes(Double.parseDouble(list.get(17).getText()));
-        matchData.setOppositeGoalsNo(Double.parseDouble(list.get(18).getText()));
+        matchData.setHandicapedMatchScore1(list.get(12).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(12).getText()));
+        matchData.setHandicapedMatchScore0(list.get(13).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(13).getText()));
+        matchData.setHandicapedMatchScore2(list.get(14).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(14).getText()));
+        matchData.setTwoAndHalfGoalLower(list.get(15).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(15).getText()));
+        matchData.setTwoAndHalfGoalUpper(list.get(16).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(16).getText()));
+        matchData.setOppositeGoalsYes(list.get(17).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(17).getText()));
+        matchData.setOppositeGoalsNo(list.get(18).getText().equalsIgnoreCase("-")?0: Double.valueOf(list.get(18).getText()));
         return matchData;
     }
 }
