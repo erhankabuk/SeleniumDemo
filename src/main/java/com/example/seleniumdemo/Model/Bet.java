@@ -43,7 +43,7 @@ public class Bet {
     private double firstHalfScore2;
 
     @Column(name = "Handicaped_Match_Score_H")
-    private double handicapedMatchScoreH;
+    private String handicapedMatchScoreH;
 
     @Column(name = "Handicaped_Match_Score_1")
     private double handicapedMatchScore1;
@@ -157,11 +157,11 @@ public class Bet {
         this.firstHalfScore2 = firstHalfScore2;
     }
 
-    public double getHandicapedMatchScoreH() {
+    public String getHandicapedMatchScoreH() {
         return handicapedMatchScoreH;
     }
 
-    public void setHandicapedMatchScoreH(double handicapedMatchScoreH) {
+    public void setHandicapedMatchScoreH(String handicapedMatchScoreH) {
         this.handicapedMatchScoreH = handicapedMatchScoreH;
     }
 
