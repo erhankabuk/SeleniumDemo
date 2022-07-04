@@ -4,10 +4,9 @@ package com.example.seleniumdemo.Model;
 import javax.persistence.*;
 
 @Entity
-@Table(name="BetList")
+@Table(name = "BetList")
 public class Bet {
 
-    //Eklenecek veri yoksa Constructor getter setter ları yap
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +23,7 @@ public class Bet {
     @Column(name = "Match_Name")
     private String matchName;
 
+    //Match Score
     @Column(name = "Match_Score_1")
     private double matchScore1;
 
@@ -33,6 +33,7 @@ public class Bet {
     @Column(name = "Match_Score_2")
     private double matchScore2;
 
+    //First Half Score
     @Column(name = "First_Half_1")
     private double firstHalfScore1;
 
@@ -42,6 +43,7 @@ public class Bet {
     @Column(name = "First_Half_2")
     private double firstHalfScore2;
 
+    //Handicaped Matches
     @Column(name = "Handicaped_Match_Score_H")
     private String handicapedMatchScoreH;
 
@@ -54,17 +56,123 @@ public class Bet {
     @Column(name = "Handicaped_Match_Score_2")
     private double handicapedMatchScore2;
 
-    @Column(name = "TwoAndHalf_Goal_Lower")
-    private double twoAndHalfGoalLower;
-
-    @Column(name = "TwoAndHalf_Goal_Upper")
-    private double twoAndHalfGoalUpper;
-
+    //Opposite Goals
     @Column(name = "Opposite_Goals_NO")
     private double oppositeGoalsNo;
 
     @Column(name = "Opposite_Goals_YES")
     private double oppositeGoalsYes;
+
+    //Lower/Upper
+    @Column(name = "Lower_Upper_05_Lower")
+    private double lowerUpper0_5Lower;
+
+    @Column(name = "Lower_Upper_05_Upper")
+    private double lowerUpper0_5Upper;
+
+    @Column(name = "Lower_Upper_15_Lower")
+    private double lowerUpper1_5Lower;
+
+    @Column(name = "Lower_Upper_15_Upper")
+    private double lowerUpper1_5Upper;
+
+    @Column(name = "Lower_Upper_25_Lower")
+    private double lowerUpper2_5Lower;
+
+    @Column(name = "Lower_Upper_25_Upper")
+    private double lowerUpper2_5Upper;
+
+    @Column(name = "Lower_Upper_35_Lower")
+    private double lowerUpper3_5Lower;
+
+    @Column(name = "Lower_Upper_35_Upper")
+    private double lowerUpper3_5Upper;
+
+    @Column(name = "Lower_Upper_45_Lower")
+    private double lowerUpper4_5Lower;
+
+    @Column(name = "Lower_Upper_45_Upper")
+    private double lowerUpper4_5Upper;
+
+    //Double Chance
+    @Column(name = "DoubleChance_02")
+    private double doubleChange0_2;
+    @Column(name = "DoubleChance_10")
+    private double doubleChange1_0;
+    @Column(name = "DoubleChance_12")
+    private double doubleChange1_2;
+
+    //First Half Double Chance
+    @Column(name = "First_Half_Double_Chance_10")
+    private double firstHalfDoubleChance1_0;
+
+    @Column(name = "First_Half_Double_Chance_12")
+    private double firstHalfDoubleChance1_2;
+
+    @Column(name = "First_Half_Double_Chance_02")
+    private double firstHalfDoubleChance0_2;
+
+    //First Half Lower/Upper
+    @Column(name = "First_Half_Lower_Upper_05_Lower")
+    private double firstHalfLowerUpper0_5Lower;
+
+    @Column(name = "First_Half_Lower_Upper_05_Upper")
+    private double firstHalfLowerUpper0_5Upper;
+
+    @Column(name = "First_Half_Lower_Upper_15_Lower")
+    private double firstHalfLowerUpper1_5Lower;
+
+    @Column(name = "First_Half_Lower_Upper_15_Upper")
+    private double firstHalfLowerUpper1_5Upper;
+
+    @Column(name = "First_Half_Lower_Upper_25_Lower")
+    private double firstHalfLowerUpper2_5Lower;
+
+    @Column(name = "First_Half_Lower_Upper_25_Upper")
+    private double firstHalfLowerUpper2_5Upper;
+
+    @Column(name = "First_Half_Lower_Upper_35_Lower")
+    private double firstHalfLowerUpper3_5Lower;
+
+    @Column(name = "First_Half_Lower_Upper_35_Upper")
+    private double firstHalfLowerUpper3_5Upper;
+
+    @Column(name = "First_Half_Lower_Upper_45_Lower")
+    private double firstHalfLowerUpper4_5Lower;
+
+    @Column(name = "First_Half_Lower_Upper_45_Upper")
+    private double firstHalfLowerUpper4_5Upper;
+
+    //Home Lower/Upper
+    @Column(name = "Home_Lower_Upper_05_Lower")
+    private double homeLowerUpper0_5Lower;
+
+    @Column(name = "Home_Lower_Upper_05_Upper")
+    private double homeLowerUpper0_5Upper;
+
+    @Column(name = "Home_Lower_Upper_15_Lower")
+    private double homeLowerUpper1_5Lower;
+
+    @Column(name = "Home_Lower_Upper_15_Upper")
+    private double homeLowerUpper1_5Upper;
+
+    @Column(name = "Home_Lower_Upper_25_Lower")
+    private double homeLowerUpper2_5Lower;
+
+    @Column(name = "Home_Lower_Upper_25_Upper")
+    private double homeLowerUpper2_5Upper;
+
+    @Column(name = "Home_Lower_Upper_35_Lower")
+    private double homeLowerUpper3_5Lower;
+
+    @Column(name = "Home_Lower_Upper_35_Upper")
+    private double homeLowerUpper3_5Upper;
+
+    @Column(name = "Home_Lower_Upper_45_Lower")
+    private double homeLowerUpper4_5Lower;
+
+    @Column(name = "Home_Lower_Upper_45_Upper")
+    private double homeLowerUpper4_5Upper;
 
     public Bet() {
     }
@@ -189,22 +297,6 @@ public class Bet {
         this.handicapedMatchScore2 = handicapedMatchScore2;
     }
 
-    public double getTwoAndHalfGoalLower() {
-        return twoAndHalfGoalLower;
-    }
-
-    public void setTwoAndHalfGoalLower(double twoAndHalfGoalLower) {
-        this.twoAndHalfGoalLower = twoAndHalfGoalLower;
-    }
-
-    public double getTwoAndHalfGoalUpper() {
-        return twoAndHalfGoalUpper;
-    }
-
-    public void setTwoAndHalfGoalUpper(double twoAndHalfGoalUpper) {
-        this.twoAndHalfGoalUpper = twoAndHalfGoalUpper;
-    }
-
     public double getOppositeGoalsNo() {
         return oppositeGoalsNo;
     }
@@ -219,5 +311,293 @@ public class Bet {
 
     public void setOppositeGoalsYes(double oppositeGoalsYes) {
         this.oppositeGoalsYes = oppositeGoalsYes;
+    }
+
+    public double getLowerUpper0_5Lower() {
+        return lowerUpper0_5Lower;
+    }
+
+    public void setLowerUpper0_5Lower(double lowerUpper0_5Lower) {
+        this.lowerUpper0_5Lower = lowerUpper0_5Lower;
+    }
+
+    public double getLowerUpper0_5Upper() {
+        return lowerUpper0_5Upper;
+    }
+
+    public void setLowerUpper0_5Upper(double lowerUpper0_5Upper) {
+        this.lowerUpper0_5Upper = lowerUpper0_5Upper;
+    }
+
+    public double getLowerUpper1_5Lower() {
+        return lowerUpper1_5Lower;
+    }
+
+    public void setLowerUpper1_5Lower(double lowerUpper1_5Lower) {
+        this.lowerUpper1_5Lower = lowerUpper1_5Lower;
+    }
+
+    public double getLowerUpper1_5Upper() {
+        return lowerUpper1_5Upper;
+    }
+
+    public void setLowerUpper1_5Upper(double lowerUpper1_5Upper) {
+        this.lowerUpper1_5Upper = lowerUpper1_5Upper;
+    }
+
+    public double getLowerUpper2_5Lower() {
+        return lowerUpper2_5Lower;
+    }
+
+    public void setLowerUpper2_5Lower(double lowerUpper2_5Lower) {
+        this.lowerUpper2_5Lower = lowerUpper2_5Lower;
+    }
+
+    public double getLowerUpper2_5Upper() {
+        return lowerUpper2_5Upper;
+    }
+
+    public void setLowerUpper2_5Upper(double lowerUpper2_5Upper) {
+        this.lowerUpper2_5Upper = lowerUpper2_5Upper;
+    }
+
+    public double getLowerUpper3_5Lower() {
+        return lowerUpper3_5Lower;
+    }
+
+    public void setLowerUpper3_5Lower(double lowerUpper3_5Lower) {
+        this.lowerUpper3_5Lower = lowerUpper3_5Lower;
+    }
+
+    public double getLowerUpper3_5Upper() {
+        return lowerUpper3_5Upper;
+    }
+
+    public void setLowerUpper3_5Upper(double lowerUpper3_5Upper) {
+        this.lowerUpper3_5Upper = lowerUpper3_5Upper;
+    }
+
+    public double getLowerUpper4_5Lower() {
+        return lowerUpper4_5Lower;
+    }
+
+    public void setLowerUpper4_5Lower(double lowerUpper4_5Lower) {
+        this.lowerUpper4_5Lower = lowerUpper4_5Lower;
+    }
+
+    public double getLowerUpper4_5Upper() {
+        return lowerUpper4_5Upper;
+    }
+
+    public void setLowerUpper4_5Upper(double lowerUpper4_5Upper) {
+        this.lowerUpper4_5Upper = lowerUpper4_5Upper;
+    }
+
+    public double getDoubleChange1_0() {
+        return doubleChange1_0;
+    }
+
+    public void setDoubleChange1_0(double doubleChange1_0) {
+        this.doubleChange1_0 = doubleChange1_0;
+    }
+
+    public double getDoubleChange1_2() {
+        return doubleChange1_2;
+    }
+
+    public void setDoubleChange1_2(double doubleChange1_2) {
+        this.doubleChange1_2 = doubleChange1_2;
+    }
+
+    public double getDoubleChange0_2() {
+        return doubleChange0_2;
+    }
+
+    public void setDoubleChange0_2(double doubleChange0_2) {
+        this.doubleChange0_2 = doubleChange0_2;
+    }
+
+    public double getFirstHalfLowerUpper0_5Lower() {
+        return firstHalfLowerUpper0_5Lower;
+    }
+
+    public void setFirstHalfLowerUpper0_5Lower(double firstHalfLowerUpper0_5Lower) {
+        this.firstHalfLowerUpper0_5Lower = firstHalfLowerUpper0_5Lower;
+    }
+
+    public double getFirstHalfLowerUpper0_5Upper() {
+        return firstHalfLowerUpper0_5Upper;
+    }
+
+    public void setFirstHalfLowerUpper0_5Upper(double firstHalfLowerUpper0_5Upper) {
+        this.firstHalfLowerUpper0_5Upper = firstHalfLowerUpper0_5Upper;
+    }
+
+    public double getFirstHalfLowerUpper1_5Lower() {
+        return firstHalfLowerUpper1_5Lower;
+    }
+
+    public void setFirstHalfLowerUpper1_5Lower(double firstHalfLowerUpper1_5Lower) {
+        this.firstHalfLowerUpper1_5Lower = firstHalfLowerUpper1_5Lower;
+    }
+
+    public double getFirstHalfLowerUpper1_5Upper() {
+        return firstHalfLowerUpper1_5Upper;
+    }
+
+    public void setFirstHalfLowerUpper1_5Upper(double firstHalfLowerUpper1_5Upper) {
+        this.firstHalfLowerUpper1_5Upper = firstHalfLowerUpper1_5Upper;
+    }
+
+    public double getFirstHalfLowerUpper2_5Lower() {
+        return firstHalfLowerUpper2_5Lower;
+    }
+
+    public void setFirstHalfLowerUpper2_5Lower(double firstHalfLowerUpper2_5Lower) {
+        this.firstHalfLowerUpper2_5Lower = firstHalfLowerUpper2_5Lower;
+    }
+
+    public double getFirstHalfLowerUpper2_5Upper() {
+        return firstHalfLowerUpper2_5Upper;
+    }
+
+    public void setFirstHalfLowerUpper2_5Upper(double firstHalfLowerUpper2_5Upper) {
+        this.firstHalfLowerUpper2_5Upper = firstHalfLowerUpper2_5Upper;
+    }
+
+    public double getFirstHalfLowerUpper3_5Lower() {
+        return firstHalfLowerUpper3_5Lower;
+    }
+
+    public void setFirstHalfLowerUpper3_5Lower(double firstHalfLowerUpper3_5Lower) {
+        this.firstHalfLowerUpper3_5Lower = firstHalfLowerUpper3_5Lower;
+    }
+
+    public double getFirstHalfLowerUpper3_5Upper() {
+        return firstHalfLowerUpper3_5Upper;
+    }
+
+    public void setFirstHalfLowerUpper3_5Upper(double firstHalfLowerUpper3_5Upper) {
+        this.firstHalfLowerUpper3_5Upper = firstHalfLowerUpper3_5Upper;
+    }
+
+    public double getFirstHalfLowerUpper4_5Lower() {
+        return firstHalfLowerUpper4_5Lower;
+    }
+
+    public void setFirstHalfLowerUpper4_5Lower(double firstHalfLowerUpper4_5Lower) {
+        this.firstHalfLowerUpper4_5Lower = firstHalfLowerUpper4_5Lower;
+    }
+
+    public double getFirstHalfLowerUpper4_5Upper() {
+        return firstHalfLowerUpper4_5Upper;
+    }
+
+    public void setFirstHalfLowerUpper4_5Upper(double firstHalfLowerUpper4_5Upper) {
+        this.firstHalfLowerUpper4_5Upper = firstHalfLowerUpper4_5Upper;
+    }
+
+    public double getFirstHalfDoubleChance1_0() {
+        return firstHalfDoubleChance1_0;
+    }
+
+    public void setFirstHalfDoubleChance1_0(double firstHalfDoubleChance1_0) {
+        this.firstHalfDoubleChance1_0 = firstHalfDoubleChance1_0;
+    }
+
+    public double getFirstHalfDoubleChance1_2() {
+        return firstHalfDoubleChance1_2;
+    }
+
+    public void setFirstHalfDoubleChance1_2(double firstHalfDoubleChance1_2) {
+        this.firstHalfDoubleChance1_2 = firstHalfDoubleChance1_2;
+    }
+
+    public double getFirstHalfDoubleChance0_2() {
+        return firstHalfDoubleChance0_2;
+    }
+
+    public void setFirstHalfDoubleChance0_2(double firstHalfDoubleChance0_2) {
+        this.firstHalfDoubleChance0_2 = firstHalfDoubleChance0_2;
+    }
+
+    public double getHomeLowerUpper0_5Lower() {
+        return homeLowerUpper0_5Lower;
+    }
+
+    public void setHomeLowerUpper0_5Lower(double homeLowerUpper0_5Lower) {
+        this.homeLowerUpper0_5Lower = homeLowerUpper0_5Lower;
+    }
+
+    public double getHomeLowerUpper0_5Upper() {
+        return homeLowerUpper0_5Upper;
+    }
+
+    public void setHomeLowerUpper0_5Upper(double homeLowerUpper0_5Upper) {
+        this.homeLowerUpper0_5Upper = homeLowerUpper0_5Upper;
+    }
+
+    public double getHomeLowerUpper1_5Lower() {
+        return homeLowerUpper1_5Lower;
+    }
+
+    public void setHomeLowerUpper1_5Lower(double homeLowerUpper1_5Lower) {
+        this.homeLowerUpper1_5Lower = homeLowerUpper1_5Lower;
+    }
+
+    public double getHomeLowerUpper1_5Upper() {
+        return homeLowerUpper1_5Upper;
+    }
+
+    public void setHomeLowerUpper1_5Upper(double homeLowerUpper1_5Upper) {
+        this.homeLowerUpper1_5Upper = homeLowerUpper1_5Upper;
+    }
+
+    public double getHomeLowerUpper2_5Lower() {
+        return homeLowerUpper2_5Lower;
+    }
+
+    public void setHomeLowerUpper2_5Lower(double homeLowerUpper2_5Lower) {
+        this.homeLowerUpper2_5Lower = homeLowerUpper2_5Lower;
+    }
+
+    public double getHomeLowerUpper2_5Upper() {
+        return homeLowerUpper2_5Upper;
+    }
+
+    public void setHomeLowerUpper2_5Upper(double homeLowerUpper2_5Upper) {
+        this.homeLowerUpper2_5Upper = homeLowerUpper2_5Upper;
+    }
+
+    public double getHomeLowerUpper3_5Lower() {
+        return homeLowerUpper3_5Lower;
+    }
+
+    public void setHomeLowerUpper3_5Lower(double homeLowerUpper3_5Lower) {
+        this.homeLowerUpper3_5Lower = homeLowerUpper3_5Lower;
+    }
+
+    public double getHomeLowerUpper3_5Upper() {
+        return homeLowerUpper3_5Upper;
+    }
+
+    public void setHomeLowerUpper3_5Upper(double homeLowerUpper3_5Upper) {
+        this.homeLowerUpper3_5Upper = homeLowerUpper3_5Upper;
+    }
+
+    public double getHomeLowerUpper4_5Lower() {
+        return homeLowerUpper4_5Lower;
+    }
+
+    public void setHomeLowerUpper4_5Lower(double homeLowerUpper4_5Lower) {
+        this.homeLowerUpper4_5Lower = homeLowerUpper4_5Lower;
+    }
+
+    public double getHomeLowerUpper4_5Upper() {
+        return homeLowerUpper4_5Upper;
+    }
+
+    public void setHomeLowerUpper4_5Upper(double homeLowerUpper4_5Upper) {
+        this.homeLowerUpper4_5Upper = homeLowerUpper4_5Upper;
     }
 }
