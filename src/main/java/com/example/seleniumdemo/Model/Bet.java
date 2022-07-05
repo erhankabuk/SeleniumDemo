@@ -2,6 +2,8 @@ package com.example.seleniumdemo.Model;
 
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "BetList")
@@ -22,6 +24,10 @@ public class Bet {
 
     @Column(name = "Match_Name")
     private String matchName;
+
+    // Update Time
+    @Column(name="Update_Time")
+    private LocalDateTime  updateTime;
 
     //Match Score
     @Column(name = "Match_Score_1")
@@ -97,8 +103,10 @@ public class Bet {
     //Double Chance
     @Column(name = "DoubleChance_02")
     private double doubleChange0_2;
+
     @Column(name = "DoubleChance_10")
     private double doubleChange1_0;
+
     @Column(name = "DoubleChance_12")
     private double doubleChange1_2;
 
@@ -215,6 +223,14 @@ public class Bet {
 
     public void setMatchName(String matchName) {
         this.matchName = matchName;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
     }
 
     public double getMatchScore1() {
@@ -393,6 +409,14 @@ public class Bet {
         this.lowerUpper4_5Upper = lowerUpper4_5Upper;
     }
 
+    public double getDoubleChange0_2() {
+        return doubleChange0_2;
+    }
+
+    public void setDoubleChange0_2(double doubleChange0_2) {
+        this.doubleChange0_2 = doubleChange0_2;
+    }
+
     public double getDoubleChange1_0() {
         return doubleChange1_0;
     }
@@ -409,12 +433,28 @@ public class Bet {
         this.doubleChange1_2 = doubleChange1_2;
     }
 
-    public double getDoubleChange0_2() {
-        return doubleChange0_2;
+    public double getFirstHalfDoubleChance1_0() {
+        return firstHalfDoubleChance1_0;
     }
 
-    public void setDoubleChange0_2(double doubleChange0_2) {
-        this.doubleChange0_2 = doubleChange0_2;
+    public void setFirstHalfDoubleChance1_0(double firstHalfDoubleChance1_0) {
+        this.firstHalfDoubleChance1_0 = firstHalfDoubleChance1_0;
+    }
+
+    public double getFirstHalfDoubleChance1_2() {
+        return firstHalfDoubleChance1_2;
+    }
+
+    public void setFirstHalfDoubleChance1_2(double firstHalfDoubleChance1_2) {
+        this.firstHalfDoubleChance1_2 = firstHalfDoubleChance1_2;
+    }
+
+    public double getFirstHalfDoubleChance0_2() {
+        return firstHalfDoubleChance0_2;
+    }
+
+    public void setFirstHalfDoubleChance0_2(double firstHalfDoubleChance0_2) {
+        this.firstHalfDoubleChance0_2 = firstHalfDoubleChance0_2;
     }
 
     public double getFirstHalfLowerUpper0_5Lower() {
@@ -495,30 +535,6 @@ public class Bet {
 
     public void setFirstHalfLowerUpper4_5Upper(double firstHalfLowerUpper4_5Upper) {
         this.firstHalfLowerUpper4_5Upper = firstHalfLowerUpper4_5Upper;
-    }
-
-    public double getFirstHalfDoubleChance1_0() {
-        return firstHalfDoubleChance1_0;
-    }
-
-    public void setFirstHalfDoubleChance1_0(double firstHalfDoubleChance1_0) {
-        this.firstHalfDoubleChance1_0 = firstHalfDoubleChance1_0;
-    }
-
-    public double getFirstHalfDoubleChance1_2() {
-        return firstHalfDoubleChance1_2;
-    }
-
-    public void setFirstHalfDoubleChance1_2(double firstHalfDoubleChance1_2) {
-        this.firstHalfDoubleChance1_2 = firstHalfDoubleChance1_2;
-    }
-
-    public double getFirstHalfDoubleChance0_2() {
-        return firstHalfDoubleChance0_2;
-    }
-
-    public void setFirstHalfDoubleChance0_2(double firstHalfDoubleChance0_2) {
-        this.firstHalfDoubleChance0_2 = firstHalfDoubleChance0_2;
     }
 
     public double getHomeLowerUpper0_5Lower() {

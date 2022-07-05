@@ -6,6 +6,8 @@ import com.example.seleniumdemo.Utility.BusinessIntegrityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class BetRepository {
     @Autowired
@@ -75,9 +77,12 @@ public class BetRepository {
         newMatch.setHomeLowerUpper4_5Lower(newMatch.getHomeLowerUpper4_5Lower());
         newMatch.setHomeLowerUpper4_5Upper(newMatch.getHomeLowerUpper4_5Upper());
 
-
         betDAO.save(newMatch);
 
+    }
+    public List<Bet> getDataFromDatabase(){
+
+      return betDAO.findAll();
 
     }
 

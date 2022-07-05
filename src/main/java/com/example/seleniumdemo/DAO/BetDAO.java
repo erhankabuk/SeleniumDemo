@@ -9,4 +9,5 @@ import java.util.Date;
 @Repository
 public interface BetDAO extends JpaRepository<Bet, Long> {
     Bet findByMatchNameAndMatchTime(String matchName, String matchTime);
+
 }
