@@ -185,6 +185,63 @@ public class Bet {
     public Bet() {
     }
 
+    public Bet(Long id, String matchNumber, String matchTime, String leagueName, String matchName, LocalDateTime updateTime, double matchScore1, double matchScore0, double matchScore2, double firstHalfScore1, double firstHalfScore0, double firstHalfScore2, String handicapedMatchScoreH, double handicapedMatchScore1, double handicapedMatchScore0, double handicapedMatchScore2, double oppositeGoalsNo, double oppositeGoalsYes, double lowerUpper0_5Lower, double lowerUpper0_5Upper, double lowerUpper1_5Lower, double lowerUpper1_5Upper, double lowerUpper2_5Lower, double lowerUpper2_5Upper, double lowerUpper3_5Lower, double lowerUpper3_5Upper, double lowerUpper4_5Lower, double lowerUpper4_5Upper, double doubleChange0_2, double doubleChange1_0, double doubleChange1_2, double firstHalfDoubleChance1_0, double firstHalfDoubleChance1_2, double firstHalfDoubleChance0_2, double firstHalfLowerUpper0_5Lower, double firstHalfLowerUpper0_5Upper, double firstHalfLowerUpper1_5Lower, double firstHalfLowerUpper1_5Upper, double firstHalfLowerUpper2_5Lower, double firstHalfLowerUpper2_5Upper, double firstHalfLowerUpper3_5Lower, double firstHalfLowerUpper3_5Upper, double firstHalfLowerUpper4_5Lower, double firstHalfLowerUpper4_5Upper, double homeLowerUpper0_5Lower, double homeLowerUpper0_5Upper, double homeLowerUpper1_5Lower, double homeLowerUpper1_5Upper, double homeLowerUpper2_5Lower, double homeLowerUpper2_5Upper, double homeLowerUpper3_5Lower, double homeLowerUpper3_5Upper, double homeLowerUpper4_5Lower, double homeLowerUpper4_5Upper) {
+        this.id = id;
+        this.matchNumber = matchNumber;
+        this.matchTime = matchTime;
+        this.leagueName = leagueName;
+        this.matchName = matchName;
+        this.updateTime = updateTime;
+        this.matchScore1 = matchScore1;
+        this.matchScore0 = matchScore0;
+        this.matchScore2 = matchScore2;
+        this.firstHalfScore1 = firstHalfScore1;
+        this.firstHalfScore0 = firstHalfScore0;
+        this.firstHalfScore2 = firstHalfScore2;
+        this.handicapedMatchScoreH = handicapedMatchScoreH;
+        this.handicapedMatchScore1 = handicapedMatchScore1;
+        this.handicapedMatchScore0 = handicapedMatchScore0;
+        this.handicapedMatchScore2 = handicapedMatchScore2;
+        this.oppositeGoalsNo = oppositeGoalsNo;
+        this.oppositeGoalsYes = oppositeGoalsYes;
+        this.lowerUpper0_5Lower = lowerUpper0_5Lower;
+        this.lowerUpper0_5Upper = lowerUpper0_5Upper;
+        this.lowerUpper1_5Lower = lowerUpper1_5Lower;
+        this.lowerUpper1_5Upper = lowerUpper1_5Upper;
+        this.lowerUpper2_5Lower = lowerUpper2_5Lower;
+        this.lowerUpper2_5Upper = lowerUpper2_5Upper;
+        this.lowerUpper3_5Lower = lowerUpper3_5Lower;
+        this.lowerUpper3_5Upper = lowerUpper3_5Upper;
+        this.lowerUpper4_5Lower = lowerUpper4_5Lower;
+        this.lowerUpper4_5Upper = lowerUpper4_5Upper;
+        this.doubleChange0_2 = doubleChange0_2;
+        this.doubleChange1_0 = doubleChange1_0;
+        this.doubleChange1_2 = doubleChange1_2;
+        this.firstHalfDoubleChance1_0 = firstHalfDoubleChance1_0;
+        this.firstHalfDoubleChance1_2 = firstHalfDoubleChance1_2;
+        this.firstHalfDoubleChance0_2 = firstHalfDoubleChance0_2;
+        this.firstHalfLowerUpper0_5Lower = firstHalfLowerUpper0_5Lower;
+        this.firstHalfLowerUpper0_5Upper = firstHalfLowerUpper0_5Upper;
+        this.firstHalfLowerUpper1_5Lower = firstHalfLowerUpper1_5Lower;
+        this.firstHalfLowerUpper1_5Upper = firstHalfLowerUpper1_5Upper;
+        this.firstHalfLowerUpper2_5Lower = firstHalfLowerUpper2_5Lower;
+        this.firstHalfLowerUpper2_5Upper = firstHalfLowerUpper2_5Upper;
+        this.firstHalfLowerUpper3_5Lower = firstHalfLowerUpper3_5Lower;
+        this.firstHalfLowerUpper3_5Upper = firstHalfLowerUpper3_5Upper;
+        this.firstHalfLowerUpper4_5Lower = firstHalfLowerUpper4_5Lower;
+        this.firstHalfLowerUpper4_5Upper = firstHalfLowerUpper4_5Upper;
+        this.homeLowerUpper0_5Lower = homeLowerUpper0_5Lower;
+        this.homeLowerUpper0_5Upper = homeLowerUpper0_5Upper;
+        this.homeLowerUpper1_5Lower = homeLowerUpper1_5Lower;
+        this.homeLowerUpper1_5Upper = homeLowerUpper1_5Upper;
+        this.homeLowerUpper2_5Lower = homeLowerUpper2_5Lower;
+        this.homeLowerUpper2_5Upper = homeLowerUpper2_5Upper;
+        this.homeLowerUpper3_5Lower = homeLowerUpper3_5Lower;
+        this.homeLowerUpper3_5Upper = homeLowerUpper3_5Upper;
+        this.homeLowerUpper4_5Lower = homeLowerUpper4_5Lower;
+        this.homeLowerUpper4_5Upper = homeLowerUpper4_5Upper;
+    }
+
     public Long getId() {
         return id;
     }
