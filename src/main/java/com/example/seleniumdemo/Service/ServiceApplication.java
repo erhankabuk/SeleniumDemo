@@ -13,68 +13,128 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+
+import static java.lang.Thread.*;
 
 @Service
 public class ServiceApplication {
     @Autowired
     BetRepository repo;
 
-
-    // ilk elementin gelişini kontrol etmem lazım
-    //title ve zamana bakıp update zamanına bak veri tabanına kaydet oradan referans al
-    //
     public void getDataFromBrowser() throws BusinessIntegrityException {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-        //WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1));
 
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         WebDriver driver = new ChromeDriver(options);
         driver.manage().deleteAllCookies();
         var lastElement = checkDatabaseForUpdate();
-
-        // if (lastElement.getUpdateTime() == null || lastElement.getUpdateTime().isBefore(LocalDateTime.now().minusHours(1)) || lastElement.getUpdateTime().equals("")) {
+        int hataliIndexi=0;
+        int hataliIndexJ=0;
         if (lastElement.getUpdateTime() == null || lastElement.getUpdateTime().isBefore(LocalDateTime.now())) {
             try {
 
                 // Navigate to Url
                 driver.get("https://www.iddaa.com/program/futbol?muk=1_1,2_88,2_100,2_101_2.5,2_89&m=false");
-                //todo use 44
+                int quantityOfMatch = 10;
                 //for (int i = 4; i < 44; i++) {
-                for (int i = 4; i < 8; i++) {
+                for (int i = 4; i < quantityOfMatch; i++) {
+                    hataliIndexi = i;
                     Bet matchData = new Bet();
-
                     String path = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/*", i);
                     List<WebElement> list = driver.findElements(By.xpath(path));
                     saveDataInMainPageToDatabase(list, matchData);
-                    // Eğer lastElementin adı ve tarihine gelinceye kadar tüm sayfayı en baştan alsın list verilerini matchDataya eşlerken bak,
+
                     var currentMatchName = list.get(4).getText();
                     var currentMatchTime = list.get(2).getText();
-                    if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName()) && !currentMatchTime.equalsIgnoreCase(lastElement.getMatchTime())) {
+                    // if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName()) && !currentMatchTime.equalsIgnoreCase(lastElement.getMatchTime())) {
+                    if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName())) {
 
                         var detailsCount = Integer.parseInt(list.get(19).getText());
                         String detailsPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/button[15]", i);
                         driver.findElement(By.xpath(detailsPath)).click();
-                        Thread.sleep(5000);
-                        for (int j = 1; j < detailsCount; j++) {
-                            //todo check data load
-                            saveDataInClickedPage(matchData, driver, j);
+                        sleep(200);
+                        //  boolean pass = false;
+                        if (i + 1 <= quantityOfMatch && checkDataFromBrowserIsLoaded(driver, i, 0)) {
+                            for (int j = 1; j <= detailsCount; j++) {
+                                hataliIndexJ = j;
+                                saveDataInClickedPage(matchData, driver, i, j);
+
+                            }
+                            System.out.println("repo çalışmadı");
+
+                            repo.addMatchDataToDatabase(matchData);
+                            System.out.println("repo çalıştı");
+                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            driver.findElement(By.xpath(closeClickedPage)).click();
+                            System.out.println("sayfa kapandı");
+                        } else {
+                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            driver.findElement(By.xpath(closeClickedPage)).click();
+                            sleep(100);
                         }
-                        String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
-                        repo.addMatchDataToDatabase(matchData);
-                        driver.findElement(By.xpath(closeClickedPage)).click();
-                        Thread.sleep(1000);
-                        //repo.addMatchDataToDatabase(saveDataToDatabase(list, matchData));
+
+
+                        /*
+                        for (int j = 1; j < detailsCount; j++) {
+                            if (checkDataFromBrowserIsLoaded(driver, j, 0)) {
+
+                                saveDataInClickedPage(matchData, driver, i, j);
+                            } else {
+                                pass = true;
+                            }
+                        }
+                        if (!pass) {
+                            System.out.println("repo çalışmadı");
+
+                            repo.addMatchDataToDatabase(matchData);
+                            System.out.println("repo çalıştı");
+                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            driver.findElement(By.xpath(closeClickedPage)).click();
+                            System.out.println("sayfa kapandı");
+                            // sleep(1000);
+                        } else {
+                            //*[@id="__next"]/div[2]/div/div/div[2]/div[4]/a
+                            //*[@id="__next"]/div[2]/div/div/div[2]/div[4]/div/div/a
+                            //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div/div/a
+                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            driver.findElement(By.xpath(closeClickedPage)).click();
+                            //sleep(1000);
+                        }
+
+                        */
+                    } else {
+                        System.out.println("Database updated");
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Error" + e + "\n mesajı " + e.getMessage() + " \nsebep " + e.getCause());
+                System.out.println("Hatalı index i : "+ hataliIndexi+" Hatalı index J : "+hataliIndexJ);
+                //System.out.println("Error" + e + "\n mesajı " + e.getMessage() + " \nsebep " + e.getCause() + "\nLokalize: ");
             }
-//            finally {
-//                driver.quit();
-//            }
-        } else {
-            driver.quit();
+        }
+        driver.quit();
+    }
+
+    // todo DEBUG checkDataFromBrowser
+    private boolean checkDataFromBrowserIsLoaded(WebDriver driver, int i, int limit) {
+        try {
+            String checkDataFromBrowserPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div/p", i + 1);
+
+            var checkDataFromBrowser = driver.findElements(By.xpath(checkDataFromBrowserPath));
+            //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div/p
+            //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[2]
+            // if (!Objects.equals(checkDataFromBrowser.get(0).getText(), "Oranlar güncellenmektedir")) {
+            if (checkDataFromBrowser.size() < 1) {
+                return true;
+            } else if (limit < 6) {
+                Thread.sleep(100);
+                limit++;
+                checkDataFromBrowserIsLoaded(driver, i, limit);
+            }
+            return false;
+        } catch (InterruptedException e) {
+            return false;
         }
     }
 
@@ -87,10 +147,19 @@ public class ServiceApplication {
     }
 
     //Get double value for each property at clicked page
-    private double getDoubleDataFromClickedPage(WebDriver driver, int j, int index) {
-        String xpath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[2]/button[%s]/div[2]/div", j, index);
+    private double getDoubleDataFromClickedPage(WebDriver driver, int i, int j, int index) throws InterruptedException {
+        // String xpath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[2]/button[%s]/div[2]/div", j, index);
+        String xpath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[2]/button[%s]/div[2]/div", i + 1, j, index);
+        // todo val exception fırlatıy   //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[%s]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[2]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
         String val = driver.findElements(By.xpath(xpath)).get(0).getText();
-        return val.equalsIgnoreCase("-") ? 0 : Double.valueOf(val);
+        sleep(100);
+        return val.equalsIgnoreCase("-") ? 0 : Double.parseDouble(val);
     }
 
     //Get All Data and save in database from main page
@@ -125,112 +194,120 @@ public class ServiceApplication {
     }
 
     //Get All Data and save in database from main page
-    private Bet saveDataInClickedPage(Bet matchData, WebDriver driver, int j) throws InterruptedException {
-        String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[1]/p", j);
-        var betName = driver.findElements(By.xpath(betNamePath)).get(0).getText();
+    private void saveDataInClickedPage(Bet matchData, WebDriver driver, int i, int j) throws InterruptedException {
+        //String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[1]/p", j);
+        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[1]/div[1]/p
+//*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[1]/p
+//*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[1]/div[1]/p
+//*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[2]/div[1]/p
+        // TODO NE HATASI VAR BURDA
+        String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[1]/p", i + 1, j);
+        var bet = driver.findElements(By.xpath(betNamePath));
+        sleep(100);
+        var betName = bet.get(0).getText();
 
         if (betName.equalsIgnoreCase("Altı/Üstü 0,5")) {
             //Lower 0,5
-            matchData.setLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             //Upper 0,5
-            matchData.setLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            // sleep(1000);
         } else if (betName.equalsIgnoreCase("Altı/Üstü 1,5")) {
             //Lower 1,5
-            matchData.setLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             //Upper 1,5
-            matchData.setLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Altı/Üstü 3,5")) {
             //Lower 3,5
-            matchData.setLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             //Upper 4,5
-            matchData.setLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Altı/Üstü 4,5")) {
             //Lower 4,5
-            matchData.setLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             //Upper 4,5
-            matchData.setLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Altı/Üstü 0,5")) {
             // First Half Lower 0,5
-            matchData.setFirstHalfLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Upper 0,5
-            matchData.setFirstHalfLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setFirstHalfLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Altı/Üstü 1,5")) {
             // First Half Lower 1,5
-            matchData.setFirstHalfLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Upper 1,5
-            matchData.setFirstHalfLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setFirstHalfLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Altı/Üstü 2,5")) {
             // First Half Lower 2,5
-            matchData.setFirstHalfLowerUpper2_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfLowerUpper2_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Upper 2,5
-            matchData.setFirstHalfLowerUpper2_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setFirstHalfLowerUpper2_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Altı/Üstü 3,5")) {
             // First Half Lower 3,5
-            matchData.setFirstHalfLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Upper 3,5
-            matchData.setFirstHalfLowerUpper3_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setFirstHalfLowerUpper3_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Altı/Üstü 4,5")) {
             // First Half Lower 4,5
-            matchData.setFirstHalfLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Upper 4,5
-            matchData.setFirstHalfLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setFirstHalfLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Ev Sahibi Altı/Üstü 0,5")) {
             // Home Lower 0,5
-            matchData.setHomeLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setHomeLowerUpper0_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Home Upper 0,5
-            matchData.setHomeLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setHomeLowerUpper0_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Ev Sahibi Altı/Üstü 1,5")) {
             // Home Lower 1,5
-            matchData.setHomeLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setHomeLowerUpper1_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Home Upper 1,5
-            matchData.setHomeLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setHomeLowerUpper1_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Ev Sahibi Altı/Üstü 2,5")) {
             // Home Lower 2,5
-            matchData.setHomeLowerUpper2_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setHomeLowerUpper2_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Home Upper 2,5
-            matchData.setHomeLowerUpper2_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setHomeLowerUpper2_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Ev Sahibi Altı/Üstü 3,5")) {
             // Home Lower 3,5
-            matchData.setHomeLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setHomeLowerUpper3_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Home Upper 3,5
-            matchData.setHomeLowerUpper3_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setHomeLowerUpper3_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Ev Sahibi Altı/Üstü 4,5")) {
             // Home Lower 4,5
-            matchData.setHomeLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setHomeLowerUpper4_5Lower(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Home Upper 4,5
-            matchData.setHomeLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, j, 2));
-            Thread.sleep(1000);
+            matchData.setHomeLowerUpper4_5Upper(getDoubleDataFromClickedPage(driver, i, j, 2));
+            //sleep(1000);
         } else if (betName.equalsIgnoreCase("Çifte Şans")) {
             // Double Chance 1_0
-            matchData.setDoubleChange1_0(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setDoubleChange1_0(getDoubleDataFromClickedPage(driver, i, j, 1));
             // Double Chance 1_2
-            matchData.setDoubleChange1_2(getDoubleDataFromClickedPage(driver, j, 2));
+            matchData.setDoubleChange1_2(getDoubleDataFromClickedPage(driver, i, j, 2));
             // Double Chance 0_2
-            matchData.setDoubleChange0_2(getDoubleDataFromClickedPage(driver, j, 3));
-            Thread.sleep(1000);
+            matchData.setDoubleChange0_2(getDoubleDataFromClickedPage(driver, i, j, 3));
+            //sleep(2000);
         } else if (betName.equalsIgnoreCase("İlk Yarı Çifte Şans")) {
             // First Half Double Chance 1_0
-            matchData.setFirstHalfDoubleChance1_0(getDoubleDataFromClickedPage(driver, j, 1));
+            matchData.setFirstHalfDoubleChance1_0(getDoubleDataFromClickedPage(driver, i, j, 1));
             // First Half Double Chance 1_2
-            matchData.setFirstHalfDoubleChance1_2(getDoubleDataFromClickedPage(driver, j, 2));
+            matchData.setFirstHalfDoubleChance1_2(getDoubleDataFromClickedPage(driver, i, j, 2));
             // First Half Double Chance 0_2
-            matchData.setFirstHalfDoubleChance0_2(getDoubleDataFromClickedPage(driver, j, 3));
-            Thread.sleep(1000);
+            matchData.setFirstHalfDoubleChance0_2(getDoubleDataFromClickedPage(driver, i, j, 3));
+            //sleep(2000);
         }
-        return matchData;
+        //  return matchData;
     }
 
 }
