@@ -2,7 +2,6 @@ package com.example.seleniumdemo.Service;
 
 import com.example.seleniumdemo.Model.Bet;
 import com.example.seleniumdemo.Repo.BetRepository;
-import com.example.seleniumdemo.Utility.BusinessIntegrityException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,11 +9,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-
 import static java.lang.Thread.*;
 
 @Service
@@ -22,105 +18,63 @@ public class ServiceApplication {
     @Autowired
     BetRepository repo;
 
-    public void getDataFromBrowser() throws BusinessIntegrityException {
+    //Run this method
+    public void getDataFromBrowser() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         WebDriver driver = new ChromeDriver(options);
         driver.manage().deleteAllCookies();
         var lastElement = checkDatabaseForUpdate();
-        int hataliIndexi=0;
-        int hataliIndexJ=0;
+        int errorIndexFor_i = 0, errorIndexFor_j = 0;
         if (lastElement.getUpdateTime() == null || lastElement.getUpdateTime().isBefore(LocalDateTime.now())) {
             try {
-
                 // Navigate to Url
                 driver.get("https://www.iddaa.com/program/futbol?muk=1_1,2_88,2_100,2_101_2.5,2_89&m=false");
-                int quantityOfMatch = 10;
-                //for (int i = 4; i < 44; i++) {
+                //int quantityOfMatch =driver.findElements(By.xpath("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[51]")).size();
+                int quantityOfMatch = 15;
                 for (int i = 4; i < quantityOfMatch; i++) {
-                    hataliIndexi = i;
+                    errorIndexFor_i = i;
                     Bet matchData = new Bet();
                     String path = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/*", i);
                     List<WebElement> list = driver.findElements(By.xpath(path));
                     saveDataInMainPageToDatabase(list, matchData);
-
                     var currentMatchName = list.get(4).getText();
-                    var currentMatchTime = list.get(2).getText();
-                    // if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName()) && !currentMatchTime.equalsIgnoreCase(lastElement.getMatchTime())) {
-                    if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName())) {
 
+                    if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName())) {
                         var detailsCount = Integer.parseInt(list.get(19).getText());
                         String detailsPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/button[15]", i);
                         driver.findElement(By.xpath(detailsPath)).click();
                         sleep(200);
                         //  boolean pass = false;
-                        if (i + 1 <= quantityOfMatch && checkDataFromBrowserIsLoaded(driver, i, 0)) {
+                        if (i + 1 < quantityOfMatch && checkDataFromBrowserIsLoaded(driver, i, 0)) {
                             for (int j = 1; j <= detailsCount; j++) {
-                                hataliIndexJ = j;
+                                errorIndexFor_j = j;
                                 saveDataInClickedPage(matchData, driver, i, j);
-
                             }
-                            System.out.println("repo çalışmadı");
-
                             repo.addMatchDataToDatabase(matchData);
-                            System.out.println("repo çalıştı");
                             String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
                             driver.findElement(By.xpath(closeClickedPage)).click();
-                            System.out.println("sayfa kapandı");
                         } else {
                             String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
                             driver.findElement(By.xpath(closeClickedPage)).click();
                             sleep(100);
                         }
-
-
-                        /*
-                        for (int j = 1; j < detailsCount; j++) {
-                            if (checkDataFromBrowserIsLoaded(driver, j, 0)) {
-
-                                saveDataInClickedPage(matchData, driver, i, j);
-                            } else {
-                                pass = true;
-                            }
-                        }
-                        if (!pass) {
-                            System.out.println("repo çalışmadı");
-
-                            repo.addMatchDataToDatabase(matchData);
-                            System.out.println("repo çalıştı");
-                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
-                            driver.findElement(By.xpath(closeClickedPage)).click();
-                            System.out.println("sayfa kapandı");
-                            // sleep(1000);
-                        } else {
-                            //*[@id="__next"]/div[2]/div/div/div[2]/div[4]/a
-                            //*[@id="__next"]/div[2]/div/div/div[2]/div[4]/div/div/a
-                            //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div/div/a
-                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
-                            driver.findElement(By.xpath(closeClickedPage)).click();
-                            //sleep(1000);
-                        }
-
-                        */
                     } else {
                         System.out.println("Database updated");
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Hatalı index i : "+ hataliIndexi+" Hatalı index J : "+hataliIndexJ);
-                //System.out.println("Error" + e + "\n mesajı " + e.getMessage() + " \nsebep " + e.getCause() + "\nLokalize: ");
+                System.out.println("Error i : " + errorIndexFor_i + " Error J : " + errorIndexFor_j);
             }
         }
         driver.quit();
     }
 
-    // todo DEBUG checkDataFromBrowser
+    // Check Browser Loaded
     private boolean checkDataFromBrowserIsLoaded(WebDriver driver, int i, int limit) {
         try {
             String checkDataFromBrowserPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div/p", i + 1);
-
             var checkDataFromBrowser = driver.findElements(By.xpath(checkDataFromBrowserPath));
             //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div/p
             //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[2]
@@ -138,7 +92,6 @@ public class ServiceApplication {
         }
     }
 
-
     //Check Update time for last element
     public Bet checkDatabaseForUpdate() {
         List<Bet> database = repo.getDataFromDatabase();
@@ -148,23 +101,15 @@ public class ServiceApplication {
 
     //Get double value for each property at clicked page
     private double getDoubleDataFromClickedPage(WebDriver driver, int i, int j, int index) throws InterruptedException {
-        // String xpath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[2]/button[%s]/div[2]/div", j, index);
         String xpath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[2]/button[%s]/div[2]/div", i + 1, j, index);
-        // todo val exception fırlatıy   //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[%s]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[2]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[38]/div[2]/button[1]/div[2]/div
         String val = driver.findElements(By.xpath(xpath)).get(0).getText();
         sleep(100);
         return val.equalsIgnoreCase("-") ? 0 : Double.parseDouble(val);
     }
 
     //Get All Data and save in database from main page
-    private Bet saveDataInMainPageToDatabase(List<WebElement> list, Bet matchData) {
-        // Bet matchData = new Bet();
+    private void saveDataInMainPageToDatabase(List<WebElement> list, Bet matchData) {
+
         matchData.setMatchNumber(list.get(1).getText());
         matchData.setMatchTime(list.get(2).getText());
         matchData.setLeagueName(list.get(3).getText());
@@ -190,17 +135,12 @@ public class ServiceApplication {
         matchData.setOppositeGoalsNo(list.get(18).getText().equalsIgnoreCase("-") ? 0 : Double.valueOf(list.get(18).getText()));
 
         matchData.setUpdateTime(LocalDateTime.now());
-        return matchData;
+
     }
 
     //Get All Data and save in database from main page
     private void saveDataInClickedPage(Bet matchData, WebDriver driver, int i, int j) throws InterruptedException {
-        //String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[%s]/div[1]/p", j);
-        //*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[1]/div[1]/p
-//*[@id="__next"]/div[2]/div/div/div[2]/div[5]/div[2]/div/div[1]/div[1]/p
-//*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[1]/div[1]/p
-//*[@id="__next"]/div[2]/div/div/div[2]/div[6]/div[2]/div/div[2]/div[1]/p
-        // TODO NE HATASI VAR BURDA
+
         String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[1]/p", i + 1, j);
         var bet = driver.findElements(By.xpath(betNamePath));
         sleep(100);
@@ -307,7 +247,7 @@ public class ServiceApplication {
             matchData.setFirstHalfDoubleChance0_2(getDoubleDataFromClickedPage(driver, i, j, 3));
             //sleep(2000);
         }
-        //  return matchData;
+
     }
 
 }
