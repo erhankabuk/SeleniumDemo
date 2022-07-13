@@ -46,8 +46,8 @@ public class ServiceApplication {
                 for (int i = 4; i < quantityOfMatch; i++) {
                     logger.info("i : " + i);
                     Bet matchData = new Bet();
+                    //*[@id="__next"]/div[2]/div/div/div[2]/div[5]
                     String path = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/*", i);
-
                     //Get data on main page
                     List<WebElement> list = driver.findElements(By.xpath(path));
                     //while (list.isEmpty()) {
