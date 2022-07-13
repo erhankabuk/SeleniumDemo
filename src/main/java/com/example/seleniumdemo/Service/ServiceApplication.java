@@ -30,7 +30,7 @@ public class ServiceApplication {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        //options.setHeadless(true);
+        options.setHeadless(true);
         WebDriver driver = new ChromeDriver(options);
 
         var lastElement = checkDatabaseForUpdate();
@@ -51,7 +51,7 @@ public class ServiceApplication {
                     //Get data on main page
                     List<WebElement> list = driver.findElements(By.xpath(path));
                     //while (list.isEmpty()) {
-                    while (list.size()==0) {
+                    while (list.size() == 0) {
                         sleep(100);
                         list = driver.findElements(By.xpath(path));
                     }
@@ -65,8 +65,8 @@ public class ServiceApplication {
                         var detailsCount = Integer.parseInt(list.get(19).getText());
                         String detailsPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/button[15]", i);
                         driver.findElement(By.xpath(detailsPath)).click();
-                        // todo check page is loaded
-                        // sleep(200);
+                        // todo check clicked page is loaded
+                        sleep(200);
 
                         if (i + 1 < quantityOfMatch && checkDataFromBrowserIsLoaded(driver, i, 0)) {
                             for (int j = 1; j <= detailsCount; j++) {
@@ -74,8 +74,8 @@ public class ServiceApplication {
                                 logger.info("j : " + i);
                             }
                             repo.addMatchDataToDatabase(matchData);
-                            //String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
-                            //driver.findElement(By.xpath(closeClickedPage)).click();
+                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            driver.findElement(By.xpath(closeClickedPage)).click();
                         } else {
                             String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
                             driver.findElement(By.xpath(closeClickedPage)).click();
@@ -165,10 +165,15 @@ public class ServiceApplication {
 
         String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[1]/p", i + 1, j);
         List<WebElement> bet = driver.findElements(By.xpath(betNamePath));
-        while (bet.isEmpty()) {
+
+        // Check clicked page is loaded
+        //while (bet.isEmpty()) {
+        while (bet.size() == 0) {
             sleep(1000);
             bet = driver.findElements(By.xpath(betNamePath));
         }
+
+        //Get name of j index
         var betName = bet.get(0).getText();
 
         if (betName.equalsIgnoreCase("Altı/Üstü 0,5")) {
