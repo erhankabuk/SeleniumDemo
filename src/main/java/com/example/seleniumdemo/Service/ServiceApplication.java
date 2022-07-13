@@ -7,10 +7,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import static java.lang.Thread.*;
 
 @Service
@@ -18,56 +23,73 @@ public class ServiceApplication {
     @Autowired
     BetRepository repo;
 
+    Logger logger = LoggerFactory.getLogger(ServiceApplication.class);
+
     //Run this method
     public void getDataFromBrowser() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        //options.setHeadless(true);
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().deleteAllCookies();
+
         var lastElement = checkDatabaseForUpdate();
-        int errorIndexFor_i = 0, errorIndexFor_j = 0;
         if (lastElement.getUpdateTime() == null || lastElement.getUpdateTime().isBefore(LocalDateTime.now())) {
             try {
                 // Navigate to Url
                 driver.get("https://www.iddaa.com/program/futbol?muk=1_1,2_88,2_100,2_101_2.5,2_89&m=false");
+                sleep(5);
+
+                // quantityOfMatche defines count of matches in main page
                 //int quantityOfMatch =driver.findElements(By.xpath("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[51]")).size();
                 int quantityOfMatch = 15;
                 for (int i = 4; i < quantityOfMatch; i++) {
-                    errorIndexFor_i = i;
+                    logger.info("i : " + i);
                     Bet matchData = new Bet();
                     String path = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/*", i);
-                    List<WebElement> list = driver.findElements(By.xpath(path));
-                    saveDataInMainPageToDatabase(list, matchData);
-                    var currentMatchName = list.get(4).getText();
 
+                    //Get data on main page
+                    List<WebElement> list = driver.findElements(By.xpath(path));
+                    //while (list.isEmpty()) {
+                    while (list.size()==0) {
+                        sleep(100);
+                        list = driver.findElements(By.xpath(path));
+                    }
+
+                    //Save data from main page
+                    saveDataInMainPageToDatabase(list, matchData);
+
+                    // Get data in clicked page
+                    var currentMatchName = list.get(4).getText();
                     if (!currentMatchName.equalsIgnoreCase(lastElement.getMatchName())) {
                         var detailsCount = Integer.parseInt(list.get(19).getText());
                         String detailsPath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[(%s)]/button[15]", i);
                         driver.findElement(By.xpath(detailsPath)).click();
-                        sleep(200);
-                        //  boolean pass = false;
+                        // todo check page is loaded
+                        // sleep(200);
+
                         if (i + 1 < quantityOfMatch && checkDataFromBrowserIsLoaded(driver, i, 0)) {
                             for (int j = 1; j <= detailsCount; j++) {
-                                errorIndexFor_j = j;
                                 saveDataInClickedPage(matchData, driver, i, j);
+                                logger.info("j : " + i);
                             }
                             repo.addMatchDataToDatabase(matchData);
-                            String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
-                            driver.findElement(By.xpath(closeClickedPage)).click();
+                            //String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
+                            //driver.findElement(By.xpath(closeClickedPage)).click();
                         } else {
                             String closeClickedPage = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div/div/a", i);
                             driver.findElement(By.xpath(closeClickedPage)).click();
                             sleep(100);
                         }
                     } else {
-                        System.out.println("Database updated");
+                        logger.trace("DataBase updated.");
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Error i : " + errorIndexFor_i + " Error J : " + errorIndexFor_j);
+                e.printStackTrace();
             }
         }
+        driver.manage().deleteAllCookies();
         driver.quit();
     }
 
@@ -108,7 +130,7 @@ public class ServiceApplication {
     }
 
     //Get All Data and save in database from main page
-    private void saveDataInMainPageToDatabase(List<WebElement> list, Bet matchData) {
+    private void saveDataInMainPageToDatabase(List<WebElement> list, Bet matchData) throws InterruptedException {
 
         matchData.setMatchNumber(list.get(1).getText());
         matchData.setMatchTime(list.get(2).getText());
@@ -142,8 +164,11 @@ public class ServiceApplication {
     private void saveDataInClickedPage(Bet matchData, WebDriver driver, int i, int j) throws InterruptedException {
 
         String betNamePath = String.format("//*[@id=\"__next\"]/div[2]/div/div/div[2]/div[%s]/div[2]/div/div[%s]/div[1]/p", i + 1, j);
-        var bet = driver.findElements(By.xpath(betNamePath));
-        sleep(100);
+        List<WebElement> bet = driver.findElements(By.xpath(betNamePath));
+        while (bet.isEmpty()) {
+            sleep(1000);
+            bet = driver.findElements(By.xpath(betNamePath));
+        }
         var betName = bet.get(0).getText();
 
         if (betName.equalsIgnoreCase("Altı/Üstü 0,5")) {

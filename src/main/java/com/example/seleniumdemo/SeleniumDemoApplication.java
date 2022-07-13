@@ -17,7 +17,7 @@ public class SeleniumDemoApplication {
             ServiceApplication service = applicationContext.getBean(ServiceApplication.class);
 
             service.getDataFromBrowser();
-            System.out.println(  service.checkDatabaseForUpdate().getUpdateTime());
+
             System.exit(0);
         } catch (BeansException e) {
             throw new BusinessIntegrityException(e.getMessage());
